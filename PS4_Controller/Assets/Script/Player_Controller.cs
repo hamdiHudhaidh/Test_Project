@@ -27,13 +27,17 @@ public class Player_Controller : MonoBehaviour
         float rightStickH = Input.GetAxis("RightStickH");
         float rightStickV = Input.GetAxis("RightStickV");
 
+        if (rightStickH > 0.2 || rightStickV > 0.2 || rightStickH < -0.2 || rightStickV < -0.2)
+        {
+            Turning(rightStickH, -rightStickV);
+        }
+        
         //adding some limitations for the controllers sinsitivity
         if (leftStickH > 0.2 || leftStickV > 0.2 || leftStickH < -0.2 || leftStickV < -0.2)
         {
             Move(leftStickH, -leftStickV);
         }
 
-        Turning(rightStickH, -rightStickV);
         Animating(leftStickH, -leftStickV);
 	}
 
@@ -44,7 +48,8 @@ public class Player_Controller : MonoBehaviour
         //making sure that the player moves at the same speed even if the player uses h&v, then multiplaying it by speed, then multiplaying it by time.deltatime to make sure that it happens with normal time
         movement = movement.normalized * MovementSpeed * Time.deltaTime;
         //adding the movement to the rigidbody
-        playerRb.MovePosition(transform.position + movement);
+        transform.position += movement;
+        // playerRb.MovePosition(transform.position + movement);
     }
 
     void Turning(float h, float v)
