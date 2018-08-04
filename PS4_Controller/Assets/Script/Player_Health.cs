@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Player_Health : MonoBehaviour
 {
-    float playerHealth = 100f;
+    //float playerHealth = 100f;
 
     void Awake()
     {
-        playerHealth = 4;
+        
     }
 	
 	void Update ()

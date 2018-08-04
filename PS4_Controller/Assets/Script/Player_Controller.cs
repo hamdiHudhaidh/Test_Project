@@ -9,12 +9,15 @@ public class Player_Controller : MonoBehaviour
 
     Vector3 movement;
     Animator anim;
-    Rigidbody playerRb;
+    //Rigidbody playerRb;
+    float animValueH;
+    float animValueV;
+    int intForAnim;
 
     void Awake()
     {
         anim = GetComponent<Animator>();
-        playerRb = GetComponent<Rigidbody>();
+        //playerRb = GetComponent<Rigidbody>();
     }
 	
 	void FixedUpdate ()
@@ -27,6 +30,12 @@ public class Player_Controller : MonoBehaviour
         float rightStickH = Input.GetAxis("RightStickH");
         float rightStickV = Input.GetAxis("RightStickV");
 
+        //getting the input axis for both the horezontal and vertical of the Dpad
+        float dPadH = Input.GetAxis("DpadH");
+        float dPadV = Input.GetAxis("DpadV");
+
+        intForAnim = 0;
+
         if (rightStickH > 0.2 || rightStickV > 0.2 || rightStickH < -0.2 || rightStickV < -0.2)
         {
             Turning(rightStickH, -rightStickV);
@@ -36,9 +45,20 @@ public class Player_Controller : MonoBehaviour
         if (leftStickH > 0.2 || leftStickV > 0.2 || leftStickH < -0.2 || leftStickV < -0.2)
         {
             Move(leftStickH, -leftStickV);
+            animValueH = leftStickH;
+            animValueV = leftStickV;
+            intForAnim = 1;
         }
 
-        Animating(leftStickH, -leftStickV);
+        if (dPadH > 0 || dPadV > 0 || dPadH < 0 || dPadV < 0)
+        {
+            Move(dPadH, dPadV);
+            animValueH = dPadH;
+            animValueV = dPadV;
+            intForAnim = 2;
+        }
+
+        Animating(animValueH, -animValueV, intForAnim);
 	}
 
     void Move(float h, float v)
@@ -49,7 +69,6 @@ public class Player_Controller : MonoBehaviour
         movement = movement.normalized * MovementSpeed * Time.deltaTime;
         //adding the movement to the rigidbody
         transform.position += movement;
-        // playerRb.MovePosition(transform.position + movement);
     }
 
     void Turning(float h, float v)
@@ -62,9 +81,21 @@ public class Player_Controller : MonoBehaviour
         this.transform.LookAt(inputDirection);
     }
 
-    void Animating(float h, float v)
+    void Animating(float h, float v, int fromDpad)
     {
-        bool walking = h > 0.2 || v > 0.2 || h < -0.2 || v < -0.2;
+        bool walking;
+        if (fromDpad == 1)
+        {
+            walking = h > 0.2 || v > 0.2 || h < -0.2 || v < -0.2;
+        }
+        else if (fromDpad == 2)
+        {
+            walking = h > 0 || v > 0 || h < 0 || v < 0;
+        }
+        else
+        {
+            walking = false;
+        }
         anim.SetBool("IsWalking", walking);
     }
 }
